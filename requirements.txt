@@ -1,0 +1,10 @@
+numpy
+pandas
+matplotlib
+scikit-learn
+streamlit
+spacy
+nltk
+PyPDF2
+pdfplumber
+joblib
