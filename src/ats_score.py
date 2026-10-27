@@ -1,59 +1,44 @@
-def calculate_skill_match(required_skills, matched_skills):
 
-    if not required_skills:
-        return 0
-
-    matched_count = len(matched_skills)
-
-    total_required = len(required_skills)
-
-    score = (
-        matched_count /
-        total_required
-    ) * 100
-
-    return score
-
-
-# ---------------------------------------
-# TEST
-# ---------------------------------------
-
-required_skills = [
-    "python",
-    "sql",
-    "machine learning",
-    "pandas",
-    "numpy",
-    "statistics"
-]
-
-matched_skills = [
-    "python",
-    "sql",
-    "machine learning",
-    "pandas",
-    "numpy",
-    "statistics"
-]
-
-
-score = calculate_skill_match(
-    required_skills,
-    matched_skills
-)
-
-
-print("Skill Match Score:")
-print(f"{score:.2f}%")
-
-# PART 2:
+import re
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
+# ---------------------------------------
+# PART 1: SKILL MATCHING
+# ---------------------------------------
+
+def calculate_skill_match(required_skills, matched_skills):
+
+    required = {
+        skill.strip().lower()
+        for skill in required_skills
+        if skill.strip()
+    }
+
+    matched = {
+        skill.strip().lower()
+        for skill in matched_skills
+        if skill.strip()
+    }
+
+    if not required:
+        return 0.0
+
+    matched_count = len(required.intersection(matched))
+
+    return (matched_count / len(required)) * 100
+
+
+# ---------------------------------------
+# PART 2: JOB DESCRIPTION SIMILARITY
+# ---------------------------------------
+
 def calculate_job_similarity(resume_text, job_description):
+
+    if not resume_text.strip() or not job_description.strip():
+        return 0.0
 
     documents = [
         resume_text,
@@ -64,113 +49,67 @@ def calculate_job_similarity(resume_text, job_description):
         stop_words="english"
     )
 
-    tfidf_matrix = vectorizer.fit_transform(
-        documents
-    )
+    try:
+        tfidf_matrix = vectorizer.fit_transform(documents)
+    except ValueError:
+        # Handles text containing no usable words.
+        return 0.0
 
     similarity = cosine_similarity(
         tfidf_matrix[0:1],
         tfidf_matrix[1:2]
     )[0][0]
 
-    return similarity * 100
+    return float(similarity * 100)
 
 
 # ---------------------------------------
-# TEST
+# PART 3: RESUME COMPLETENESS
 # ---------------------------------------
 
-resume_text = """
-Python developer with experience in SQL,
-machine learning, Pandas, NumPy and
-data analysis.
-"""
-
-job_description = """
-We are looking for a Data Scientist with
-experience in Python, SQL, machine learning,
-Pandas, NumPy and data analysis.
-"""
-
-
-similarity_score = calculate_job_similarity(
-    resume_text,
-    job_description
-)
-
-
-print("\nJob Description Similarity:")
-print(f"{similarity_score:.2f}%")
-
-
-# PART 3:
 def calculate_completeness(resume_text):
 
-    resume_text = resume_text.lower()
+    text = resume_text.lower()
 
-    important_sections = [
-        "skills",
-        "education",
-        "experience",
-        "projects",
-        "certifications",
-        "contact"
-    ]
+    section_patterns = {
+        "Skills": r"\bskills?\b",
+        "Education": (
+            r"\b(education|bachelor|master|degree|"
+            r"university|college)\b"
+        ),
+        "Experience": (
+            r"\b(experience|employment|internship|"
+            r"intern|worked)\b"
+        ),
+        "Projects": r"\bprojects?\b",
+        "Certifications": r"\b(certifications?|certificates?)\b",
+        "Contact": (
+            r"\bcontact\b|"
+            r"\b[\w.+%-]+@[\w.-]+\.[a-zA-Z]{2,}\b|"
+            r"\blinkedin\.com\b|"
+            r"\bgithub\.com\b"
+        )
+    }
 
     found_sections = []
 
-    for section in important_sections:
+    for section, pattern in section_patterns.items():
 
-        if section in resume_text:
+        if re.search(pattern, text):
             found_sections.append(section)
 
+    total_sections = len(section_patterns)
+
     score = (
-        len(found_sections) /
-        len(important_sections)
+        len(found_sections) / total_sections
     ) * 100
 
     return score, found_sections
 
 
 # ---------------------------------------
-# TEST
+# PART 4: FINAL ATS SCORE
 # ---------------------------------------
-
-resume_text = """
-ALEX SHARMA
-
-Python Developer
-
-SKILLS
-Python, SQL, Machine Learning
-
-EDUCATION
-Bachelor of Technology
-
-PROJECTS
-House Price Prediction
-
-EXPERIENCE
-Machine Learning Intern
-
-CERTIFICATIONS
-Python Programming
-"""
-
-
-completeness_score, found_sections = calculate_completeness(
-    resume_text
-)
-
-
-print("\nResume Completeness:")
-print(f"{completeness_score:.2f}%")
-
-print("\nDetected Sections:")
-print(", ".join(found_sections))
-
-
-#  PART 4:
 
 def calculate_ats_score(
     skill_match,
@@ -185,20 +124,3 @@ def calculate_ats_score(
     )
 
     return final_score
-
-# ---------------------------------------
-# FINAL ATS SCORE
-# ---------------------------------------
-
-final_score = calculate_ats_score(
-    score,
-    similarity_score,
-    completeness_score
-)
-
-
-print("\n================================")
-print("        FINAL ATS SCORE")
-print("================================")
-
-print(f"\nATS Score: {final_score:.2f} / 100")

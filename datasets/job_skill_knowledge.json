@@ -1,0 +1,89 @@
+{
+    "Data Scientist": {
+        "required_skills": [
+            "python",
+            "sql",
+            "machine learning",
+            "pandas",
+            "numpy",
+            "statistics"
+        ],
+        "related_roles": [
+            "Data Analyst",
+            "Machine Learning Engineer"
+        ]
+    },
+
+    "Machine Learning Engineer": {
+        "required_skills": [
+            "python",
+            "machine learning",
+            "scikit-learn",
+            "tensorflow",
+            "pytorch",
+            "numpy"
+        ],
+        "related_roles": [
+            "Data Scientist",
+            "AI Engineer"
+        ]
+    },
+
+    "Web Developer": {
+        "required_skills": [
+            "html",
+            "css",
+            "javascript",
+            "react",
+            "node.js"
+        ],
+        "related_roles": [
+            "Frontend Developer",
+            "Full Stack Developer"
+        ]
+    },
+
+    "Data Analyst": {
+        "required_skills": [
+            "python",
+            "sql",
+            "excel",
+            "power bi",
+            "pandas",
+            "statistics"
+        ],
+        "related_roles": [
+            "Data Scientist",
+            "Business Analyst"
+        ]
+    },
+
+    "Cloud Engineer": {
+        "required_skills": [
+            "aws",
+            "azure",
+            "docker",
+            "linux",
+            "networking"
+        ],
+        "related_roles": [
+            "DevOps Engineer",
+            "System Administrator"
+        ]
+    },
+
+    "Backend Developer": {
+        "required_skills": [
+            "python",
+            "java",
+            "node.js",
+            "sql",
+            "mongodb",
+            "api"
+        ],
+        "related_roles": [
+            "Software Engineer",
+            "Full Stack Developer"
+        ]
+    }
+}
