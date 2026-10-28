@@ -8,3 +8,6 @@ nltk
 PyPDF2
 pdfplumber
 joblib
+PyMuPDF
+pytesseract
+Pillow
